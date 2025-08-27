@@ -1,17 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:demo;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://postgres:5432/demo   #    url при локальной версии: jdbc:postgresql://localhost:5432/demo
+    driver-class-name: org.postgresql.Driver
+    username: demo
+    password: demo
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    show-sql: false
 
 modbus:
   devices:
@@ -43,5 +39,6 @@ management:
 
 logging:
   level:
-    root: INFO
-    com.example.demo: DEBUG
+    root: WARN
+    org.hibernate.SQL: OFF
+    com.example.demo.service.DevicePollingService: WARN
