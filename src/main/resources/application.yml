@@ -11,7 +11,9 @@ spring:
 
 modbus:
   devices:
-    - name: dev1
+    # Если указать только часть параметров - остальные возьмутся из значений по умолчанию:
+    # port=502, rateMs=2000, timeoutMs=1000, retries=1, registers=[]
+    - name: device1
       ip: host.docker.internal
       port: 502
       unitId: 1
@@ -19,7 +21,7 @@ modbus:
       timeoutMs: 1000
       retries: 1
       registers: [0,1,2,3]
-    - name: dev2
+    - name: device2
       ip: host.docker.internal
       port: 502
       unitId: 2

@@ -1,5 +1,4 @@
 package com.example.demo.service;
-
 import com.example.demo.config.ModbusProperties;
 import com.example.demo.entity.Measurement;
 import com.example.demo.repository.MeasurementRepository;
@@ -12,7 +11,6 @@ import io.micrometer.core.instrument.Gauge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.time.Instant;
@@ -23,15 +21,15 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DevicePollingService {
     private static final Logger log = LoggerFactory.getLogger(DevicePollingService.class);
 
-    private final ModbusProperties props;
-    private final com.example.demo.config.ModbusManager modbusManager;
-    private final MeasurementRepository repo;
-    private final MeterRegistry meterRegistry;
+    private final ModbusProperties props; //Конфигурация Modbus устройств, читается из application.yml
+    private final com.example.demo.config.ModbusManager modbusManager;  // Менеджер для подключения к Modbus
+    private final MeasurementRepository repo; // Репозиторий для сохранения данных в БД
+    private final MeterRegistry meterRegistry; // Метрики для мониторинга (prometheus, micrometer)
 
     private ScheduledExecutorService scheduler;
-    // lastValue map для метрик (ключ: device:register)
+    // Здесь хранятся последние значения регистров по каждому устройству
     private final ConcurrentMap<String, AtomicReference<Double>> lastValues = new ConcurrentHashMap<>();
-
+    // Конструктор, через него Spring будет передавать зависимости
     public DevicePollingService(ModbusProperties props,
                                 com.example.demo.config.ModbusManager modbusManager,
                                 MeasurementRepository repo,
@@ -46,16 +44,17 @@ public class DevicePollingService {
     public void start() {
         int size = Math.max(1, props.getDevices().size());
         scheduler = Executors.newScheduledThreadPool(size);
-
+        // Проходим по каждому устройству из настроек
         for (ModbusProperties.DeviceConfig d : props.getDevices()) {
             final String deviceName = d.getName() != null ? d.getName() : d.getIp() + ":" + d.getPort();
             final int unitId = d.getUnitId();
             final long rate = Math.max(100, d.getRateMs()); // защита от нулевого rate
-            // подготовим lastValue для каждого register и метрики
+            // Для каждого регистра создаём lastValue и Gauge метрику
             for (Integer reg : d.getRegisters()) {
                 String key = mkKey(deviceName, reg);
                 lastValues.putIfAbsent(key, new AtomicReference<>(Double.NaN));
                 AtomicReference<Double> ref = lastValues.get(key);
+                // Gauge – метрика, которая показывает последнее значение регистра
                 Gauge.builder("modbus.last_value", ref, v -> {
                             Double val = v.get();
                             return val == null ? Double.NaN : val;
@@ -74,7 +73,7 @@ public class DevicePollingService {
                                     BaseLocator.holdingRegister(unitId, reg, DataType.TWO_BYTE_INT_SIGNED)
                             );
                             String sVal = value == null ? null : value.toString();
-                            // лог / консоль
+                            //  консоль
                             log.info("Device={} Holding[{}] = {}", deviceName, reg, sVal);
                             System.out.printf("%s Holding[%d] = %s%n", deviceName, reg, sVal);
 

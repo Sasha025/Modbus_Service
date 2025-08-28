@@ -19,11 +19,11 @@
 //        params.setPort(props.getPort());
 //
 //        ModbusFactory factory = new ModbusFactory();
-//        // true = keepAlive (удерживать соединение)
+//
 //        ModbusMaster master = factory.createTcpMaster(params, true);
 //        master.setTimeout(props.getTimeoutMs());
 //        master.setRetries(props.getRetries());
-//        master.init(); // важный момент!
+//        master.init();
 //        return master;
 //    }
 //}
