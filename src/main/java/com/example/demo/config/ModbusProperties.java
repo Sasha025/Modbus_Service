@@ -7,13 +7,13 @@ import java.util.List;
 @ConfigurationProperties(prefix = "modbus")
 public class ModbusProperties {
 
-    private List<DeviceConfig> devices = new ArrayList<>();
+    private List<DeviceConfig> devices = new ArrayList<>();  // Список устройств, которые мы указываем в конфиге
 
     public List<DeviceConfig> getDevices() { return devices; }
     public void setDevices(List<DeviceConfig> devices) { this.devices = devices; }
-
+    // Вложенный класс для описания одного устройства (грубо говоря класс с дефолтными значениями, если в конфигурационноми файле они не указаны)
     public static class DeviceConfig {
-        private String name;            // уникальное имя устройства (device1 ...)
+        private String name;            //  (device1 ...)
         private String ip;
         private int port = 502;
         private int unitId = 1;

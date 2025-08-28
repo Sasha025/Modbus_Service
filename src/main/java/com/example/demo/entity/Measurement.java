@@ -31,7 +31,6 @@ public class Measurement {
         this.ts = ts;
     }
 
-    // --- Getters & Setters ---
     public Long getId() {
         return id;
     }
@@ -72,7 +71,6 @@ public class Measurement {
         this.ts = ts;
     }
 
-    // --- Удобный вывод ---
     @Override
     public String toString() {
         return "Measurement{" +
