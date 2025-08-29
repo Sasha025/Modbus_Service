@@ -41,3 +41,13 @@ docker-compose up -d --build
 ```
 docker-compose logs -f app
 ```
+
+## Мониторинг и метрики
+
+http://localhost:8080/actuator/prometheus
+
+## Конфигурационный файл
+
+```
+src/main/resources/application.yml
+```
